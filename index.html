@@ -1,0 +1,207 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Glassware Catalog</title>
+<style>
+:root{--bg:#f6f4ef;--card:#fff;--ink:#1f2933;--mute:#6b7785;--line:#e3ded3;--accent:#0f5f5a;--accent2:#0b4a46;--warn:#b45309;--r:14px}
+@media (prefers-color-scheme:dark){:root{--bg:#14181b;--card:#1c2226;--ink:#eceff1;--mute:#9aa7b2;--line:#2b343a;--accent:#4fb3aa;--accent2:#7cd0c8}}
+*{box-sizing:border-box}html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.45 "Segoe UI",Roboto,Arial,sans-serif}
+button,input,select,textarea{font:inherit;color:inherit}
+header{position:sticky;top:0;z-index:20;background:var(--card);border-bottom:1px solid var(--line)}
+.bar{max-width:1240px;margin:0 auto;padding:12px 16px;display:flex;gap:12px;align-items:center}
+.brand{font-weight:700;font-size:18px;letter-spacing:.3px;white-space:nowrap}
+.brand small{display:block;font-weight:400;font-size:11px;color:var(--mute);letter-spacing:0}
+.search{flex:1;min-width:0;position:relative}
+.search input{width:100%;padding:10px 14px;border:1px solid var(--line);border-radius:999px;background:var(--bg)}
+.btn{border:0;border-radius:999px;padding:10px 16px;background:var(--accent);color:#fff;cursor:pointer;font-weight:600;white-space:nowrap}
+.btn:hover{background:var(--accent2)}.btn.ghost{background:transparent;color:var(--accent);border:1px solid var(--accent)}
+.btn.sm{padding:6px 12px;font-size:13px}
+.badge{display:inline-block;min-width:20px;padding:0 6px;margin-left:6px;border-radius:999px;background:#fff;color:var(--accent2);font-size:12px;text-align:center}
+main{max-width:1240px;margin:0 auto;padding:16px}
+.filters{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:12px}
+.chip{border:1px solid var(--line);background:var(--card);border-radius:999px;padding:6px 14px;cursor:pointer;font-size:14px}
+.chip.on{background:var(--accent);color:#fff;border-color:var(--accent)}
+select{border:1px solid var(--line);background:var(--card);border-radius:10px;padding:7px 10px}
+.row2{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:14px;color:var(--mute);font-size:14px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);overflow:hidden;cursor:pointer;display:flex;flex-direction:column;transition:box-shadow .15s}
+.card:hover{box-shadow:0 6px 22px rgba(0,0,0,.12)}
+.ph{aspect-ratio:4/3;background:#ecebe6;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.ph img{width:100%;height:100%;object-fit:cover}
+.ci{padding:10px 12px 12px}.ci .no{font-weight:700;font-size:16px}.ci .nm{color:var(--mute);font-size:13px}
+.sw{display:flex;gap:5px;margin:8px 0 6px;flex-wrap:wrap}
+.dot{width:18px;height:18px;border-radius:50%;border:2px solid var(--card);box-shadow:0 0 0 1px var(--line);cursor:pointer;padding:0}
+.dot.on{box-shadow:0 0 0 2px var(--accent)}
+.facts{font-size:12.5px;color:var(--mute)}
+.empty{padding:60px 0;text-align:center;color:var(--mute)}
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);display:none;z-index:40;align-items:flex-start;justify-content:center;overflow:auto;padding:20px 12px}
+.overlay.open{display:flex}
+.modal{background:var(--card);border-radius:18px;max-width:900px;width:100%;position:relative;overflow:hidden}
+.x{position:absolute;right:10px;top:10px;z-index:3;border:0;background:rgba(255,255,255,.9);color:#111;width:34px;height:34px;border-radius:50%;font-size:20px;cursor:pointer}
+.md{display:grid;grid-template-columns:1.05fr 1fr}
+@media(max-width:700px){.md{grid-template-columns:1fr}.brand small{display:none}.bar{flex-wrap:wrap}.search{order:3;flex-basis:100%}}
+.big{background:#ecebe6;display:flex;align-items:center;justify-content:center;min-height:240px}.big img{width:100%;display:block}
+.info{padding:18px 20px}
+.info h2{margin:0;font-size:22px}.info .sub{color:var(--mute);margin-bottom:10px}
+table.sp{width:100%;border-collapse:collapse;font-size:14px;margin:10px 0}
+.sp td{padding:6px 0;border-bottom:1px solid var(--line);vertical-align:top}.sp td:first-child{color:var(--mute);width:46%}
+.order{background:var(--bg);border-radius:12px;padding:12px;margin-top:10px}
+.order label{font-size:13px;color:var(--mute)}
+.qty{display:flex;align-items:center;gap:8px;margin:8px 0}
+.qty input{width:84px;padding:8px;border:1px solid var(--line);border-radius:8px;background:var(--card);text-align:center}
+.qty button{width:34px;height:34px;border-radius:8px;border:1px solid var(--line);background:var(--card);cursor:pointer;font-size:18px}
+.calc{font-size:13px;color:var(--mute);margin-bottom:10px}
+.drawer{position:fixed;top:0;right:0;bottom:0;width:min(440px,100%);background:var(--card);z-index:50;transform:translateX(105%);transition:transform .22s;display:flex;flex-direction:column;box-shadow:-8px 0 30px rgba(0,0,0,.2)}
+.drawer.open{transform:none}
+.dh{padding:14px 16px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center}
+.db{flex:1;overflow:auto;padding:8px 16px}
+.li{display:grid;grid-template-columns:64px 1fr auto;gap:10px;padding:10px 0;border-bottom:1px solid var(--line);align-items:center}
+.li img{width:64px;height:48px;object-fit:cover;border-radius:8px;background:#ecebe6}
+.li .t{font-weight:600}.li .m{font-size:12.5px;color:var(--mute)}
+.li input{width:60px;padding:5px;border:1px solid var(--line);border-radius:6px;background:var(--bg);text-align:center}
+.rm{border:0;background:none;color:var(--warn);cursor:pointer;font-size:12px}
+.df{padding:12px 16px;border-top:1px solid var(--line);background:var(--bg)}
+.tot{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;text-align:center;margin-bottom:10px}
+.tot b{display:block;font-size:16px}.tot span{font-size:11px;color:var(--mute)}
+.f2{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:8px}
+.f2 input,textarea{width:100%;padding:8px;border:1px solid var(--line);border-radius:8px;background:var(--card)}
+textarea{grid-column:1/-1;resize:vertical}
+.acts{display:flex;gap:6px;flex-wrap:wrap}.acts .btn{flex:1;text-align:center;text-decoration:none}
+.wa{background:#1fa855}.wa:hover{background:#178a45}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#111;color:#fff;padding:10px 18px;border-radius:999px;z-index:80;opacity:0;pointer-events:none;transition:opacity .2s}
+.toast.on{opacity:1}
+footer{max-width:1240px;margin:20px auto;padding:0 16px 30px;color:var(--mute);font-size:12.5px}
+</style>
+</head>
+<body>
+<header><div class="bar">
+  <div class="brand"><span id="co">Your Company</span><small>Glassware &amp; Housewares Catalog</small></div>
+  <div class="search"><input id="q" type="search" placeholder="Search item no. (e.g. 5098, CNL-2001), name or color"></div>
+  <button class="btn" id="openInq">Inquiry list<span class="badge" id="cnt">0</span></button>
+</div></header>
+<main>
+  <div class="filters" id="cats"></div>
+  <div class="row2">
+    <select id="fc"><option value="">All colors</option></select>
+    <select id="fcap"><option value="">Any capacity</option><option value="0-200">Up to 200 ml</option><option value="201-300">201 – 300 ml</option><option value="301-400">301 – 400 ml</option></select>
+    <select id="sort"><option value="">Sort: catalog order</option><option value="cbm">Carton CBM: low to high</option><option value="pcs">Pcs per carton: high to low</option><option value="cap">Capacity: high to low</option></select>
+    <span id="res"></span>
+  </div>
+  <div class="grid" id="grid"></div>
+  <div class="empty" id="none" hidden>No products match. Try clearing the filters.</div>
+</main>
+<footer>Prices, MOQ and lead time are given on request. Sizes are in mm; carton size in cm. Select products, add them to the inquiry list and send it to us for a quotation.</footer>
+
+<div class="overlay" id="ov"><div class="modal" id="modal"></div></div>
+<aside class="drawer" id="dr" aria-label="Inquiry list">
+  <div class="dh"><b>Your inquiry list</b><button class="btn ghost sm" id="closeInq">Close</button></div>
+  <div class="db" id="items"></div>
+  <div class="df">
+    <div class="tot"><div><b id="tc">0</b><span>Cartons</span></div><div><b id="tp">0</b><span>Pieces</span></div><div><b id="tv">0</b><span>CBM</span></div><div><b id="tw">0</b><span>Gross kg</span></div></div>
+    <div class="f2"><input id="nm" placeholder="Your name"><input id="cp" placeholder="Company"><input id="ct" placeholder="Country"><input id="ph" placeholder="Phone / WhatsApp"><textarea id="nt" rows="2" placeholder="Notes (logo, packing, target price...)"></textarea></div>
+    <div class="acts"><a class="btn wa" id="wa" target="_blank" rel="noopener">Send by WhatsApp</a><a class="btn" id="em">Send by email</a><button class="btn ghost" id="cpy">Copy</button><button class="btn ghost" id="csv">Download CSV</button></div>
+  </div>
+</aside>
+<div class="toast" id="toast"></div>
+
+<script>
+/* ====== EDIT THESE ====== */
+const CONFIG={company:"ZEIN IMP&EXP LTD",whatsapp:"008618058982040",/* number with country code, digits only, e.g. 8613800000000 */ email:"" /* e.g. sales@yourcompany.com */};
+/* ======================== */
+const PRODUCTS=[{"id": "5098", "name": "Glass Tumbler Set", "category": "Tumblers", "top": 78.0, "bottom": 51.0, "height": 98.0, "weight_g": 245.0, "cap": 250.0, "pack_text": "6 pcs per color box", "inner": 6, "boxes": 12, "pcs": 72, "carton": "47.7 × 34.3 × 33", "cbm": 0.054, "gw": 19.3, "variants": [{"color": "Emerald Green", "hex": "#2f7d5c", "img": "000.jpg"}, {"color": "Titanium Blue", "hex": "#3b6fa8", "img": "001.jpg"}, {"color": "Ruby Red", "hex": "#c0262d", "img": "002.jpg"}, {"color": "Ice Blue", "hex": "#8fb8de", "img": "003.jpg"}, {"color": "Lilac", "hex": "#a98bb8", "img": "004.jpg"}]}, {"id": "5262", "name": "Footed Dessert Cup Set", "category": "Dessert Cups", "top": 117.0, "bottom": 76.0, "height": 100.0, "weight_g": 382.0, "cap": 337.0, "pack_text": "6 pcs per color box", "inner": 6, "boxes": 8, "pcs": 48, "carton": "50 × 33 × 45.5", "cbm": 0.075, "gw": 19.5, "variants": [{"color": "Emerald Green", "hex": "#2f7d5c", "img": "005.jpg"}, {"color": "Titanium Blue", "hex": "#3b6fa8", "img": "006.jpg"}, {"color": "Ruby Red", "hex": "#c0262d", "img": "007.jpg"}, {"color": "Ice Blue", "hex": "#8fb8de", "img": "008.jpg"}, {"color": "Lilac", "hex": "#a98bb8", "img": "009.jpg"}]}, {"id": "5218", "name": "Champagne Flute Set", "category": "Goblets & Flutes", "top": 61.0, "bottom": 71.0, "height": 198.0, "weight_g": 312.0, "cap": 183.0, "pack_text": "6 pcs per color box", "inner": 6, "boxes": 8, "pcs": 48, "carton": "43 × 31 × 42.5", "cbm": 0.0567, "gw": 16.4, "variants": [{"color": "Emerald Green", "hex": "#2f7d5c", "img": "010.jpg"}, {"color": "Titanium Blue", "hex": "#3b6fa8", "img": "011.jpg"}, {"color": "Ruby Red", "hex": "#c0262d", "img": "012.jpg"}, {"color": "Ice Blue", "hex": "#8fb8de", "img": "013.jpg"}, {"color": "Lilac", "hex": "#a98bb8", "img": "014.jpg"}]}, {"id": "5125", "name": "Tall Glass Tumbler Set", "category": "Tumblers", "top": 75.0, "bottom": 61.0, "height": 125.0, "weight_g": 349.0, "cap": 316.0, "pack_text": "6 pcs per color box", "inner": 6, "boxes": 8, "pcs": 48, "carton": "45.5 × 33 × 27.5", "cbm": 0.0413, "gw": 18.5, "variants": [{"color": "Emerald Green", "hex": "#2f7d5c", "img": "015.jpg"}, {"color": "Titanium Blue", "hex": "#3b6fa8", "img": "016.jpg"}, {"color": "Ruby Red", "hex": "#c0262d", "img": "017.jpg"}, {"color": "Ice Blue", "hex": "#8fb8de", "img": "018.jpg"}, {"color": "Lilac", "hex": "#a98bb8", "img": "019.jpg"}]}, {"id": "5168", "name": "Wine Goblet Set", "category": "Goblets & Flutes", "top": 90.0, "bottom": 75.0, "height": 165.0, "weight_g": 365.0, "cap": 327.0, "pack_text": "6 pcs per color box", "inner": 6, "boxes": 8, "pcs": 48, "carton": "44.5 × 31.5 × 34.5", "cbm": 0.076, "gw": 19.0, "variants": [{"color": "Emerald Green", "hex": "#2f7d5c", "img": "020.jpg"}, {"color": "Titanium Blue", "hex": "#3b6fa8", "img": "021.jpg"}, {"color": "Ruby Red", "hex": "#c0262d", "img": "022.jpg"}, {"color": "Ice Blue", "hex": "#8fb8de", "img": "023.jpg"}, {"color": "Lilac", "hex": "#a98bb8", "img": "024.jpg"}]}, {"id": "MDO-5201", "name": "Glass Dome Dish Set", "category": "Dome Dishes", "top": 146.0, "bottom": 150.0, "height": 150.0, "weight_g": 1000.0, "cap": null, "pack_text": "1 set per color box", "inner": 1, "boxes": 12, "pcs": 12, "carton": "61.5 × 41.5 × 30", "cbm": 0.077, "gw": 12.0, "variants": [{"color": "Clear", "hex": "#e8eef2", "img": "025.jpg"}, {"color": "Amber", "hex": "#d9a441", "img": "028.jpg"}, {"color": "Rainbow", "hex": "#b9a7d9", "img": "031.jpg"}, {"color": "Emerald Green", "hex": "#2f7d5c", "img": "034.jpg"}, {"color": "Titanium Blue", "hex": "#3b6fa8", "img": "037.jpg"}, {"color": "Lilac", "hex": "#a98bb8", "img": "040.jpg"}]}, {"id": "MDO-5202", "name": "Glass Dome Dish Set", "category": "Dome Dishes", "top": 146.0, "bottom": 150.0, "height": 150.0, "weight_g": 1000.0, "cap": null, "pack_text": "1 set per color box", "inner": 1, "boxes": 12, "pcs": 12, "carton": "61.5 × 41.5 × 30", "cbm": 0.077, "gw": 12.0, "variants": [{"color": "Clear", "hex": "#e8eef2", "img": "026.jpg"}, {"color": "Amber", "hex": "#d9a441", "img": "029.jpg"}, {"color": "Rainbow", "hex": "#b9a7d9", "img": "032.jpg"}, {"color": "Emerald Green", "hex": "#2f7d5c", "img": "035.jpg"}, {"color": "Titanium Blue", "hex": "#3b6fa8", "img": "038.jpg"}, {"color": "Lilac", "hex": "#a98bb8", "img": "041.jpg"}]}, {"id": "MDO-5203", "name": "Glass Dome Dish Set", "category": "Dome Dishes", "top": 146.0, "bottom": 150.0, "height": 150.0, "weight_g": 1000.0, "cap": null, "pack_text": "1 set per color box", "inner": 1, "boxes": 12, "pcs": 12, "carton": "61.5 × 41.5 × 30", "cbm": 0.077, "gw": 12.0, "variants": [{"color": "Clear", "hex": "#e8eef2", "img": "027.jpg"}, {"color": "Amber", "hex": "#d9a441", "img": "030.jpg"}, {"color": "Rainbow", "hex": "#b9a7d9", "img": "033.jpg"}, {"color": "Emerald Green", "hex": "#2f7d5c", "img": "036.jpg"}, {"color": "Titanium Blue", "hex": "#3b6fa8", "img": "039.jpg"}, {"color": "Lilac", "hex": "#a98bb8", "img": "042.jpg"}]}, {"id": "CNL-2001", "name": "Glass Vase", "category": "Vases", "top": 90.0, "bottom": 62.0, "height": 192.0, "weight_g": 500.0, "cap": 280.0, "pack_text": "1 pc per color box", "inner": 1, "boxes": 36, "pcs": 36, "carton": "55.5 × 28 × 41.5", "cbm": 0.0645, "gw": 19.5, "variants": [{"color": "Clear", "hex": "#e8eef2", "img": "043.jpg"}, {"color": "Amber", "hex": "#d9a441", "img": "047.jpg"}, {"color": "Lilac", "hex": "#a98bb8", "img": "051.jpg"}, {"color": "Emerald Green", "hex": "#2f7d5c", "img": "055.jpg"}]}, {"id": "CNL-2002", "name": "Glass Vase", "category": "Vases", "top": 90.0, "bottom": 62.0, "height": 192.0, "weight_g": 500.0, "cap": 280.0, "pack_text": "1 pc per color box", "inner": 1, "boxes": 36, "pcs": 36, "carton": "55.5 × 28 × 41.5", "cbm": 0.0645, "gw": 19.5, "variants": [{"color": "Clear", "hex": "#e8eef2", "img": "044.jpg"}, {"color": "Amber", "hex": "#d9a441", "img": "048.jpg"}, {"color": "Lilac", "hex": "#a98bb8", "img": "052.jpg"}, {"color": "Emerald Green", "hex": "#2f7d5c", "img": "056.jpg"}]}, {"id": "CNL-2003", "name": "Glass Vase", "category": "Vases", "top": 90.0, "bottom": 62.0, "height": 192.0, "weight_g": 500.0, "cap": 280.0, "pack_text": "1 pc per color box", "inner": 1, "boxes": 36, "pcs": 36, "carton": "55.5 × 28 × 41.5", "cbm": 0.0645, "gw": 19.5, "variants": [{"color": "Clear", "hex": "#e8eef2", "img": "045.jpg"}, {"color": "Amber", "hex": "#d9a441", "img": "049.jpg"}, {"color": "Lilac", "hex": "#a98bb8", "img": "053.jpg"}, {"color": "Emerald Green", "hex": "#2f7d5c", "img": "057.jpg"}]}, {"id": "CNL-2004", "name": "Glass Vase", "category": "Vases", "top": 90.0, "bottom": 62.0, "height": 192.0, "weight_g": 500.0, "cap": 280.0, "pack_text": "1 pc per color box", "inner": 1, "boxes": 36, "pcs": 36, "carton": "55.5 × 28 × 41.5", "cbm": 0.0645, "gw": 19.5, "variants": [{"color": "Clear", "hex": "#e8eef2", "img": "046.jpg"}, {"color": "Amber", "hex": "#d9a441", "img": "050.jpg"}, {"color": "Lilac", "hex": "#a98bb8", "img": "054.jpg"}, {"color": "Emerald Green", "hex": "#2f7d5c", "img": "058.jpg"}]}];
+const IMGS=null;
+const src=f=>IMGS?IMGS[f]:'images/'+f;
+const $=id=>document.getElementById(id);
+const unit=p=>p.id.startsWith('MDO')?'sets':'pcs';
+const fmt=(n,d=2)=>(+n).toLocaleString('en-US',{maximumFractionDigits:d});
+let inq=[];try{inq=JSON.parse(localStorage.getItem('inq')||'[]')}catch(e){}
+const save=()=>{try{localStorage.setItem('inq',JSON.stringify(inq))}catch(e){}};
+$('co').textContent=CONFIG.company;document.title=CONFIG.company+' – Glassware Catalog';
+const sel={cat:'',color:'',cap:'',q:'',sort:''};
+const cats=[...new Set(PRODUCTS.map(p=>p.category))];
+const colors=[...new Set(PRODUCTS.flatMap(p=>p.variants.map(v=>v.color)))];
+$('cats').innerHTML=['All',...cats].map(c=>`<button class="chip${c==='All'?' on':''}" data-c="${c==='All'?'':c}">${c}</button>`).join('');
+$('fc').innerHTML+=colors.map(c=>`<option>${c}</option>`).join('');
+$('cats').onclick=e=>{const b=e.target.closest('.chip');if(!b)return;sel.cat=b.dataset.c;[...$('cats').children].forEach(x=>x.classList.toggle('on',x===b));render()};
+$('fc').onchange=e=>{sel.color=e.target.value;render()};$('fcap').onchange=e=>{sel.cap=e.target.value;render()};
+$('sort').onchange=e=>{sel.sort=e.target.value;render()};$('q').oninput=e=>{sel.q=e.target.value.trim().toLowerCase();render()};
+const cur={};
+function match(p){
+  if(sel.cat&&p.category!==sel.cat)return false;
+  if(sel.color&&!p.variants.some(v=>v.color===sel.color))return false;
+  if(sel.cap){const[a,b]=sel.cap.split('-').map(Number);if(!(p.cap&&p.cap>=a&&p.cap<=b))return false}
+  if(sel.q){const h=(p.id+' '+p.name+' '+p.category+' '+p.variants.map(v=>v.color).join(' ')).toLowerCase();if(!sel.q.split(/\s+/).every(t=>h.includes(t)))return false}
+  return true}
+function render(){
+  let l=PRODUCTS.filter(match);
+  if(sel.sort==='cbm')l.sort((a,b)=>a.cbm-b.cbm);if(sel.sort==='pcs')l.sort((a,b)=>b.pcs-a.pcs);if(sel.sort==='cap')l.sort((a,b)=>(b.cap||0)-(a.cap||0));
+  $('res').textContent=l.length+' product'+(l.length===1?'':'s');$('none').hidden=l.length>0;
+  $('grid').innerHTML=l.map(p=>{
+    let i=cur[p.id]??0;if(sel.color){const j=p.variants.findIndex(v=>v.color===sel.color);if(j>=0&&cur[p.id]===undefined)i=j}
+    const v=p.variants[i];
+    return `<div class="card" data-id="${p.id}"><div class="ph"><img loading="lazy" alt="${p.id} ${v.color}" src="${src(v.img)}"></div><div class="ci"><div class="no">${p.id}</div><div class="nm">${p.name}</div>
+    <div class="sw">${p.variants.map((x,k)=>`<button class="dot${k===i?' on':''}" data-k="${k}" title="${x.color}" style="background:${x.hex}"></button>`).join('')}</div>
+    <div class="facts">${p.cap?p.cap+' ml · ':''}H ${p.height} mm · ${p.pcs} ${unit(p)}/carton · ${fmt(p.cbm,3)} CBM</div></div></div>`}).join('');
+}
+$('grid').onclick=e=>{
+  const c=e.target.closest('.card');if(!c)return;const id=c.dataset.id;const d=e.target.closest('.dot');
+  if(d){e.stopPropagation();cur[id]=+d.dataset.k;const p=PRODUCTS.find(x=>x.id===id);c.querySelector('img').src=src(p.variants[cur[id]].img);c.querySelectorAll('.dot').forEach((x,k)=>x.classList.toggle('on',k===cur[id]));return}
+  openP(id)};
+let mp=null,mi=0;
+function openP(id){
+  mp=PRODUCTS.find(x=>x.id===id);mi=cur[id]??0;
+  if(sel.color&&cur[id]===undefined){const j=mp.variants.findIndex(v=>v.color===sel.color);if(j>=0)mi=j}
+  const p=mp,u=unit(p);
+  const rows=[['Item no.',p.id],['Category',p.category],['Top / bottom / height (mm)',`${p.top} / ${p.bottom} / ${p.height}`],['Weight',fmt(p.weight_g,0)+' g'],['Capacity',p.cap?p.cap+' ml':'–'],
+    ['Packing',`${p.pack_text} × ${p.boxes} boxes`],[`${u==='sets'?'Sets':'Pieces'} per carton`,p.pcs],['Carton size (cm)',p.carton],['Carton volume',fmt(p.cbm,4)+' CBM'],['Carton gross weight',p.gw+' kg'],['Price / MOQ / lead time','On request']];
+  $('modal').innerHTML=`<button class="x" id="mx" aria-label="Close">×</button><div class="md"><div class="big"><img id="mimg" alt=""></div><div class="info">
+   <h2>${p.id}</h2><div class="sub">${p.name}</div>
+   <div class="sw" id="msw">${p.variants.map((x,k)=>`<button class="dot" data-k="${k}" title="${x.color}" style="background:${x.hex};width:26px;height:26px"></button>`).join('')}</div>
+   <div><b id="mcol"></b></div>
+   <table class="sp">${rows.map(r=>`<tr><td>${r[0]}</td><td>${r[1]}</td></tr>`).join('')}</table>
+   <div class="order"><label>Order quantity (cartons)</label><div class="qty"><button id="m1">−</button><input id="mq" type="number" min="1" value="1"><button id="m2">+</button></div>
+   <div class="calc" id="mc"></div><button class="btn" id="madd" style="width:100%">Add to inquiry list</button></div></div></div>`;
+  const upd=()=>{const v=p.variants[mi];$('mimg').src=src(v.img);$('mcol').textContent=v.color;[...$('msw').children].forEach((x,k)=>x.classList.toggle('on',k===mi));
+    const q=Math.max(1,+$('mq').value||1);$('mc').textContent=`${fmt(q*p.pcs,0)} ${u} · ${fmt(q*p.cbm,3)} CBM · ${fmt(q*p.gw,1)} kg gross`};
+  $('msw').onclick=e=>{const d=e.target.closest('.dot');if(d){mi=+d.dataset.k;cur[p.id]=mi;upd()}};
+  $('mq').oninput=upd;$('m1').onclick=()=>{$('mq').value=Math.max(1,(+$('mq').value||1)-1);upd()};$('m2').onclick=()=>{$('mq').value=(+$('mq').value||1)+1;upd()};
+  $('mx').onclick=closeP;
+  $('madd').onclick=()=>{const q=Math.max(1,Math.round(+$('mq').value||1));const v=p.variants[mi];const k=inq.find(x=>x.id===p.id&&x.color===v.color);
+    if(k)k.q+=q;else inq.push({id:p.id,color:v.color,q});save();upIq();toast(`${p.id} ${v.color} added`);closeP();render()};
+  upd();$('ov').classList.add('open');document.body.style.overflow='hidden'}
+function closeP(){$('ov').classList.remove('open');document.body.style.overflow=''}
+$('ov').onclick=e=>{if(e.target===$('ov'))closeP()};
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeP();$('dr').classList.remove('open')}});
+function lines(){return inq.map(x=>{const p=PRODUCTS.find(y=>y.id===x.id);const v=p.variants.find(y=>y.color===x.color);return {...x,p,v}}).filter(x=>x.p&&x.v)}
+function totals(L){return L.reduce((a,x)=>({c:a.c+x.q,p:a.p+x.q*x.p.pcs,v:a.v+x.q*x.p.cbm,w:a.w+x.q*x.p.gw}),{c:0,p:0,v:0,w:0})}
+function upIq(){
+  const L=lines(),T=totals(L);$('cnt').textContent=L.length;
+  $('items').innerHTML=L.length?L.map((x,i)=>`<div class="li"><img src="${src(x.v.img)}" alt=""><div><div class="t">${x.id} · ${x.color}</div><div class="m">${x.p.name} · ${x.p.pcs} ${unit(x.p)}/carton</div><button class="rm" data-i="${i}">Remove</button></div><div style="text-align:center"><input type="number" min="1" value="${x.q}" data-i="${i}"><div class="m">cartons</div></div></div>`).join(''):'<div class="empty">Your list is empty.<br>Open a product and tap “Add to inquiry list”.</div>';
+  $('tc').textContent=fmt(T.c,0);$('tp').textContent=fmt(T.p,0);$('tv').textContent=fmt(T.v,2);$('tw').textContent=fmt(T.w,0);
+  const m=msg(L,T);
+  $('wa').href='https://wa.me/'+(CONFIG.whatsapp||'')+'?text='+encodeURIComponent(m);
+  $('em').href='mailto:'+(CONFIG.email||'')+'?subject='+encodeURIComponent('Inquiry from '+($('nm').value||'customer'))+'&body='+encodeURIComponent(m)}
+function msg(L,T){
+  const who=[$('nm').value,$('cp').value,$('ct').value,$('ph').value].filter(Boolean).join(', ');
+  return `Hello, I would like a quotation for the following items:\n\n`+L.map((x,i)=>`${i+1}. ${x.id} ${x.p.name} – ${x.color} – ${x.q} carton(s) = ${fmt(x.q*x.p.pcs,0)} ${unit(x.p)}`).join('\n')+
+  `\n\nTotal: ${fmt(T.c,0)} cartons, ${fmt(T.p,0)} pcs, ${fmt(T.v,2)} CBM, ${fmt(T.w,0)} kg gross.`+($('nt').value?`\nNotes: ${$('nt').value}`:'')+(who?`\n\nFrom: ${who}`:'')}
+$('items').onclick=e=>{const b=e.target.closest('.rm');if(b){const L=lines();const x=L[+b.dataset.i];inq=inq.filter(y=>!(y.id===x.id&&y.color===x.color));save();upIq()}};
+$('items').onchange=e=>{if(e.target.tagName==='INPUT'){const L=lines();const x=L[+e.target.dataset.i];const t=inq.find(y=>y.id===x.id&&y.color===x.color);t.q=Math.max(1,Math.round(+e.target.value||1));save();upIq()}};
+['nm','cp','ct','ph','nt'].forEach(i=>$(i).oninput=upIq);
+$('openInq').onclick=()=>{upIq();$('dr').classList.add('open')};$('closeInq').onclick=()=>$('dr').classList.remove('open');
+$('wa').onclick=e=>{if(!CONFIG.whatsapp){e.preventDefault();toast('WhatsApp number not set yet. Use Copy or email.')}if(!inq.length){e.preventDefault();toast('Add products first')}};
+$('em').onclick=e=>{if(!inq.length){e.preventDefault();toast('Add products first')}};
+$('cpy').onclick=()=>{const L=lines();if(!L.length)return toast('Add products first');const m=msg(L,totals(L));
+  (navigator.clipboard?navigator.clipboard.writeText(m):Promise.reject()).then(()=>toast('Copied'),()=>{const t=document.createElement('textarea');t.value=m;document.body.appendChild(t);t.select();try{document.execCommand('copy');toast('Copied')}catch(e){toast('Copy failed')}t.remove()})};
+$('csv').onclick=()=>{const L=lines();if(!L.length)return toast('Add products first');
+  const h=['Item no','Name','Color','Cartons','Pcs per carton','Total pcs','Carton size cm','CBM per carton','Total CBM','Gross kg per carton','Total gross kg'];
+  const r=L.map(x=>[x.id,x.p.name,x.color,x.q,x.p.pcs,x.q*x.p.pcs,x.p.carton,x.p.cbm,+(x.q*x.p.cbm).toFixed(4),x.p.gw,+(x.q*x.p.gw).toFixed(2)]);
+  const t=[h,...r].map(a=>a.map(c=>`"${String(c).replace(/"/g,'""')}"`).join(',')).join('\r\n');
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob(['﻿'+t],{type:'text/csv'}));a.download='inquiry.csv';document.body.appendChild(a);a.click();a.remove()};
+let tt;function toast(s){const t=$('toast');t.textContent=s;t.classList.add('on');clearTimeout(tt);tt=setTimeout(()=>t.classList.remove('on'),2200)}
+render();upIq();
+</script>
+</body></html>
